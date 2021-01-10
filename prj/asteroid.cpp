@@ -1,0 +1,62 @@
+#include "asteroid.h"
+
+Asteroid::Asteroid(float Diametre, float Speed, Vector2u screen, Vector2f SpawnPosition, int SpawnTime, Texture* texture) :
+	speed(Speed), spawnPosition(SpawnPosition), spawnTime(SpawnTime), diametre(Diametre) {
+	maxDistance = sqrt(screen.x * screen.x + screen.y * screen.y);
+	KD = maxDistance / (Speed * 1500);
+	exist = false;
+	clock.restart();
+	asteroidIsMove = false;
+	asteroid.setSize(Vector2f(diametre, diametre));
+	asteroid.setTexture(texture);
+	asteroid.setOrigin(asteroid.getLocalBounds().width / 2, asteroid.getLocalBounds().height / 2);
+	asteroid.setPosition(SpawnPosition);
+	destroy = false;
+	angleRotation = 0.0f;
+}
+
+void Asteroid::Move(Player& player) {
+	Vector2f direction(asteroid.getOrigin());
+	Vector2f playerPos = player.getPos();
+	if (flag) {
+		angleRotation = atan(abs(asteroid.getPosition().x - player.getPos().x) / abs(asteroid.getPosition().y - player.getPos().y)) / M_PI * 180.0f;
+		if (playerPos.y < asteroid.getPosition().y && playerPos.x < asteroid.getPosition().x)
+			angleRotation = 180.0f - angleRotation;
+		if (playerPos.y < asteroid.getPosition().y && playerPos.x > asteroid.getPosition().x)
+			angleRotation = 180.0f + angleRotation;
+		if (playerPos.y > asteroid.getPosition().y && playerPos.x > asteroid.getPosition().x)
+			angleRotation = 360.0f - angleRotation;
+		asteroid.setRotation(angleRotation);
+		flag = false;
+	}
+	asteroid.move(direction.x * sin(-asteroid.getRotation() * M_PI / 180.0f) * speed, direction.y * cos(-asteroid.getRotation() * M_PI / 180.0f) * speed);
+}
+
+void Asteroid::update(Vector2f spawn, Texture* texture) {
+	flag = true;
+	exist = true;
+	clock.restart();
+	asteroid.setPosition(spawn.x, spawn.y);
+	asteroid.setTexture(texture);
+}
+
+void Asteroid::Destroy(std::vector<Texture*>& textures) {
+	int currentFrame = dest_anim_clock.getElapsedTime().asMilliseconds() / 16;
+	dest_sprite.setPosition(dest_pos);
+	int anim_speed = 2;
+	for (ptrdiff_t i = 0; i < textures.size() * anim_speed; i += anim_speed) {
+		if (currentFrame >= textures.size() * anim_speed) {
+			destroy = false;
+			break;
+		}
+		if (currentFrame > i && currentFrame < i + anim_speed) {
+			dest_sprite.setTexture(*textures[i / (anim_speed * 2)]);
+			break;
+		}
+	}
+}
+
+void Asteroid::updateSpeed(float Speed) {
+	speed = Speed;
+	KD = maxDistance / (Speed * 1500);
+}
