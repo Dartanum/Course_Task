@@ -19,7 +19,7 @@ endif()
 
 include_directories(prj)
 
-set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}")
+#set(CMAKE_INSTALL_PREFIX .)
 install(FILES 
 	${SFML_DIR}/bin/openal32.dll
 	${SFML_DIR}/bin/sfml-audio-2.dll
@@ -30,12 +30,12 @@ install(FILES
 	${SFML_DIR}/bin/sfml-graphics-d-2.dll
 	${SFML_DIR}/bin/sfml-system-d-2.dll
 	${SFML_DIR}/bin/sfml-window-d-2.dll 
-	DESTINATION ${PROJECT_BINARY_DIR}/game_build)
+	DESTINATION ${CMAKE_INSTALL_PREFIX})
 	
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src 
-	DESTINATION ${PROJECT_BINARY_DIR}/game_build)
+	DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/doc DESTINATION ${PROJECT_BINARY_DIR})
 
 add_subdirectory(prj)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${PROJECT_BINARY_DIR}/game_build)
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
