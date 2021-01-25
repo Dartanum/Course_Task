@@ -19,7 +19,6 @@ endif()
 
 include_directories(prj)
 
-#set(CMAKE_INSTALL_PREFIX .)
 install(FILES 
 	${SFML_DIR}/bin/openal32.dll
 	${SFML_DIR}/bin/sfml-audio-2.dll
